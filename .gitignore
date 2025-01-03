@@ -1,0 +1,74 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+env/
+venv/
+.venv/
+
+# Cache and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+Thumbs.db
+*.sqlite3
+*.db
+*.lock
+
+# Data files
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.hdf
+*.h5
+*.nc
+*.grib
+*.grib2
+*.zip
+*.tar
+*.gz
+*.bz2
+*.parquet
+*.feather
+
+# Model and serialized files
+*.pkl
+*.joblib
+*.h5
+*.onnx
+
+# Output files
+*.out
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+# Configuration files
+.env
+*.ini
+*.cfg
+*.toml
+
+# Python package build
+build/
+dist/
+*.egg-info/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.code-workspace
+
+# Git-specific
+*.orig
+*.rej
