@@ -22,6 +22,7 @@ Thumbs.db
 *.db
 *.lock
 # Data files
+*.csv
 *.tsv
 *.xls
 *.xlsx
