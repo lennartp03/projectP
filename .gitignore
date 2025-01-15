@@ -38,6 +38,7 @@ Thumbs.db
 *.bz2
 *.parquet
 *.feather
+*.idx
 
 # Model and serialized files
 *.pkl
