@@ -21,7 +21,6 @@ Thumbs.db
 *.sqlite3
 *.db
 *.lock
-
 # Data files
 *.csv
 *.tsv
@@ -32,12 +31,12 @@ Thumbs.db
 *.nc
 *.grib
 *.grib2
-*.zip
 *.tar
 *.gz
 *.bz2
 *.parquet
 *.feather
+*.idx
 
 # Model and serialized files
 *.pkl
