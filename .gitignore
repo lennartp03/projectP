@@ -31,7 +31,6 @@ Thumbs.db
 *.nc
 *.grib
 *.grib2
-*.zip
 *.tar
 *.gz
 *.bz2
