@@ -17,14 +17,16 @@ for entry in np_array:
     grouped_days[year_month].add(entry['day'])
 
 # Convert the defaultdict to a regular dictionary for easier use
-unique_combs = {key: sorted(value) for key, value in grouped_days.items()}
+unique_combs = {key: sorted(value) for key, value in grouped_days.items() if key <= '2015-12-31'}
 
+# get all dates afer 2015-12-31
+unique_combs_after_15 = {key: value for key, value in grouped_days.items() if key > '2015-12-31'}
+
+# Retrieve data for dates up to 2015-12-31
 for item in unique_combs:
     year = str(item.split('-')[0])
     month = str(item.split('-')[1])
     days = [f'{day}' for day in unique_combs[item]]
-
-
     dataset = "satellite-sea-ice-concentration"
     request = {
         "variable": "all",
@@ -38,6 +40,26 @@ for item in unique_combs:
         "month": [str(month)],
         "day": days
     }
+    client = cdsapi.Client()
+    client.retrieve(dataset, request).download()
 
+# Retrieve data for dates after 2015-12-31
+for item in unique_combs_after_15:
+    year = str(item.split('-')[0])
+    month = str(item.split('-')[1])
+    days = [f'{day}' for day in unique_combs_after_15[item]]
+    dataset = "satellite-sea-ice-concentration"
+    request = {
+        "variable": "all",
+        "version": "v2",
+        "sensor": "ssmis",
+        "origin": "eumetsat_osi_saf",
+        "region": ["southern_hemisphere"],
+        "cdr_type": ["icdr"],
+        "temporal_aggregation": "daily",
+        "year": [str(year)],
+        "month": [str(month)],
+        "day": days
+    }
     client = cdsapi.Client()
     client.retrieve(dataset, request).download()

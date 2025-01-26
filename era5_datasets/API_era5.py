@@ -28,10 +28,17 @@ for item in unique_combs:
     dataset = "derived-era5-single-levels-daily-statistics"
     request = {
         "product_type": "ensemble_mean",
+        # "variable": [
+        #     "2m_temperature",
+        #     "total_precipitation"
+        # ],
         "variable": [
-            "2m_temperature",
-            "total_precipitation"
-        ],
+        "sea_surface_temperature",
+        "snow_density",
+        "snow_depth",
+        "sea_ice_cover",
+        "mean_snowmelt_rate"
+    ],
         "year": str(year),
         "month": [
             str(month)
