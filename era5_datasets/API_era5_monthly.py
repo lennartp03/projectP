@@ -12,6 +12,7 @@ request = {
         "snow_depth",
         "mean_snowmelt_rate"
     ],
+    # for our data
     # "year": [
     #     "1990", "1991", "1992",
     #     "1993", "1994", "1995",
@@ -25,6 +26,7 @@ request = {
     #     "2017", "2018", "2019",
     #     "2020"
     # ],
+    # for reference dataset
     "year": [
         "1961", "1962", "1963",
         "1964", "1965", "1966",
