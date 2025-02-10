@@ -60,6 +60,7 @@ projectp/
 │       └── plots_lr.py
 ├── README.md
 ├── LICENSE
+├── environment.yml
 └── requirements.txt
 ```
 
@@ -91,15 +92,24 @@ Context and description of the main directories:
 
 ## Requirements
 
-To run this project, create a `venv` and install the required dependencies:
+To run this project, create a `venv` and install the required dependencies. The project was developed using `Python 3.9.18`.
+
+_Conda:_
 
 ```bash
-python3 -m venv venv
+conda env create -f environment.yml
+conda activate projectp
+```
+
+_Pip:_
+
+```bash
+python3 -m venv projectp
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-NOTE: This repository contains barely no datasets due to the restrictions of the Copernicus Climate Data Store and the Seabird Tracking Database. The data must be requested from the respective sources. Other than that, the logic cannot be executed without the data.
+NOTE: Copernicus Climate Data Store and Seabird Tracking Database access is required to retrieve the data and to run the scripts.
 
 ## Results and Reporting
 
