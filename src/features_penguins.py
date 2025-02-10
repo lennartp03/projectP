@@ -8,7 +8,7 @@ from datetime import datetime
 from geopy import distance
 from sklearn.preprocessing import OneHotEncoder
 import json
-
+##
 
 def load_penguins(path):
     """
