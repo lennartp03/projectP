@@ -40,6 +40,17 @@ def date_formatting(df):
 
     return df
 
+def geodesic_distance(df):
+    """
+    Calculate geodesic distance between bird and colony
+    Elliposid used: WGS-84  
+    """
+    df['pos_bird'] = list(zip(df['latitude'], df['longitude']))
+    df['pos_colony'] = list(zip(df['lat_colony'], df['lon_colony']))
+    df['km_to_colony'] = df.apply(lambda row: distance.distance(row['pos_bird'], row['pos_colony']).km, axis=1)
+
+    return df
+
 def mean_distance(df):
     # Calculate mean distance and std per penguin
     mean_distance_per_penguin = df.groupby('track_id')['km_to_colony'].mean()

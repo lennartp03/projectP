@@ -24,6 +24,67 @@ def plot_predictions(daily_df, target, forecast_dates, predictions, lower_bounds
     plt.tight_layout()
     plt.show()
 
+def plot_predictions_scientific(daily_df, target, forecast_dates, predictions, lower_bounds, upper_bounds):
+    """
+    Plot the full time series along with forecast predictions and 95% prediction intervals.
+    
+    This function creates a minimalist, publication-quality plot. It removes borders 
+    (i.e., spines) and customizes tick parameters for a clean appearance, similar to styles 
+    seen in ICCV publications.
+    
+    Parameters:
+        daily_df (pd.DataFrame): Original daily data containing the 'date' column.
+        target (str): Name of the target variable.
+        forecast_dates (array-like): Dates corresponding to the forecast period.
+        predictions (list or array-like): Point forecasts.
+        lower_bounds (list or array-like): Lower bounds of the prediction interval.
+        upper_bounds (list or array-like): Upper bounds of the prediction interval.
+    """
+    # Ensure forecast_dates are in datetime format
+    forecast_dates = pd.to_datetime(forecast_dates)
+    
+    # Create the figure and axis
+    fig, ax = plt.subplots(figsize=(14, 6))
+    
+    # Plot actual data
+    ax.plot(daily_df['date'], daily_df[target],
+            label='Actual',
+            color='gray',
+            linewidth=2)
+    
+    # Plot forecast predictions and 95% prediction interval
+    ax.plot(forecast_dates, predictions,
+            label='Ridge Predictions',
+            color='red',
+            linewidth=2)
+    ax.fill_between(forecast_dates, lower_bounds, upper_bounds,
+                    color='red',
+                    alpha=0.2,
+                    label='95% Prediction Interval')
+    
+    # Labeling and title with scientific font sizes and weight
+    ax.set_xlabel("Date", fontsize=14)
+    ax.set_ylabel(f"Daily Mean {target}", fontsize=14)
+    #ax.set_title("Rolling Forecast with Ridge Regression and Bootstrapped Uncertainty",
+    #             fontsize=16, weight='bold')
+    
+    # Remove borders (spines) for a cleaner look
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    
+    # Remove tick marks by setting their length to zero and adjust label sizes
+    ax.tick_params(axis='both', which='both', length=0, labelsize=12)
+    
+    # Optionally, remove the grid (or enable it with a light style if preferred)
+    ax.grid(False)
+    
+    # Place legend without a frame for a cleaner appearance
+    legend = ax.legend(frameon=False, fontsize=12)
+    
+    # Optimize layout
+    plt.tight_layout()
+    plt.show()
+
 def plot_coefficients(coefficients, features, forecast_dates):
     """
     Plot the evolution of Ridge regression coefficients over the forecast period.
