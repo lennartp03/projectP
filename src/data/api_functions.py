@@ -3,6 +3,9 @@ import json
 import numpy as np
 from collections import defaultdict
 import os
+import zipfile
+import shutil
+import xarray as xr
 
 
 def get_unique_date_combinations(filepath):
@@ -118,3 +121,61 @@ def get_monthly_era5_data(period, target_directory):
     target_path = os.path.join(target_directory, target_file)
     client = cdsapi.Client()
     client.retrieve(dataset, request).download(target_path)
+
+
+### ========================= ###
+def unzip_files(folder):
+    files = os.listdir(folder)
+    for file in files:
+        if file.endswith('.zip'):
+            file_path = os.path.join(folder, file)
+            zip_file = zipfile.ZipFile(file_path)
+            for names in zip_file.namelist():
+                namestring = file.rstrip('.zip')
+                zip_file.extract(names,f'{folder}/{namestring}')
+            os.remove(file_path)
+            zip_file.close()
+
+
+def flatten_and_rename_nc_files(input_folder):
+    i = 0
+    for folder in os.listdir(input_folder):
+        subfolder_path = os.path.join(input_folder, folder)
+
+        if os.path.isdir(subfolder_path):
+            for file_name in os.listdir(subfolder_path):
+                if file_name.endswith('.nc'):
+                    base_name = file_name.removesuffix('.nc')
+                    new_file_name = f"{base_name}_{i}.nc"
+
+                    src_path = os.path.join(subfolder_path, file_name)
+                    dst_path = os.path.join(input_folder, new_file_name)
+
+                    os.rename(src_path, dst_path)
+                    i += 1
+                    
+            shutil.rmtree(subfolder_path)
+
+
+
+def join_dataframes(input_folder, identifier: str):
+    files=os.listdir(input_folder)
+    # Filter files based on the identifier
+    filtered_files = [os.path.join(input_folder, file) for file in files if file.startswith(identifier)]
+    
+    # Use xr.open_mfdataset to open multiple files
+    x = xr.open_mfdataset(filtered_files, engine='netcdf4', combine='by_coords')
+    
+    # Convert to dataframe
+    x_frame = x.to_dataframe().reset_index()
+    
+    # Group by and aggregate
+    flattened = x_frame.groupby(['valid_time', 'latitude', 'longitude']).agg('sum').reset_index()
+
+    ### Drop number column
+    flattened = flattened.drop(columns=['number'])
+    
+    # Save to netCDF
+    flattened.to_netcdf(f"{identifier}.nc")
+    
+    # return flattened

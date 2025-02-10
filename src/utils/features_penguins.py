@@ -355,3 +355,23 @@ def calculte_mean_deviation(df):
             mean_value = df_specie['km_to_colony_mean'].mean()
             mean_deviation = (df_specie['km_to_colony_mean'] - mean_value).abs().mean()
             print(colony, mean_deviation)
+
+
+def check_availability(df, threshold):
+    available_years = [str(x) for x in range(1996, 2018)]
+    available_years = np.array(available_years)
+
+    # Ensure the 'year' column in df_penguins_final is of type string
+    df['year'] = df['year'].astype(str)
+
+    # For each species and colony, see if there is data for more than 10 years
+    species = df['common_name'].unique()
+    results_species_colony = []
+
+    for specie in species:
+        for colony in df[df['common_name'] == specie]['colony_name'].unique():
+            years_with_data = df[(df['common_name'] == specie) & (df['colony_name'] == colony)]['year'].unique()
+            if len(years_with_data) >= threshold:
+                print(f'{specie} , {colony} has data for more than {threshold} years')
+            else:
+                print('--')

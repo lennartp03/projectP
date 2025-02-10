@@ -67,6 +67,59 @@ def calculate_anomalies(df, reference_period_df):
     return grouped_anomaly
 
 
+def calculate_monthly_anomalies(df, reference_period_df):
+    """
+    For each column (except time/coordinate/ID columns), subtract
+    the mean of that column for the given month (in the reference period),
+    and optionally divide by the standard deviation if desired.
+    """
+
+    # Identify the data columns on which to compute anomalies
+    ignore_cols = ['valid_time', 'latitude', 'longitude', 'year', 'month']
+    columns = [col for col in df.columns if col not in ignore_cols]
+
+    # 1. Group the reference period by `month` and compute mean and std
+    #    This results in a MultiIndex DataFrame with (column, statistic)
+    ref_stats = (
+        reference_period_df.groupby('month')[columns]
+        .agg(['mean', 'std'])
+    )
+    # ref_stats has shape like:
+    #               col1           col2          ...
+    #               mean    std    mean    std   ...
+    #     month
+    #      1
+    #      2
+    #     ...
+    
+    # 2. Create a copy of df to store anomalies
+    anomalies_df = df.copy()
+
+    # 3. For each row in df, pick the corresponding reference mean & std
+    #    for that row's month, and compute anomaly.
+    for col in columns:
+        # For a given column, "ref_stats[col]['mean']" is a Series,
+        # indexed by 'month'
+        mean_series = ref_stats[col]['mean']
+        std_series  = ref_stats[col]['std']
+
+        # Subtraction by monthly mean:
+        anomalies_df[col] = anomalies_df.apply(
+            lambda row: row[col] - mean_series.loc[row['month']],
+            axis=1
+        )
+
+        # Optionally, if you want to standardize (z-score):
+        anomalies_df[col] = anomalies_df.apply(
+            lambda row: row[col] / std_series.loc[row['month']]
+                        if std_series.loc[row['month']] != 0 else 0,
+            axis=1
+        )
+
+    return anomalies_df
+
+
+
 
 
 def plot_monthly(df, columns, titles, deg):
