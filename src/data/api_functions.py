@@ -176,6 +176,10 @@ def join_dataframes(input_folder, identifier: str):
     flattened = flattened.drop(columns=['number'])
     
     # Save to netCDF
+
+    """
+    ADJUST PATH????
+    """
     flattened.to_netcdf(f"{identifier}.nc")
     
     # return flattened

@@ -63,62 +63,95 @@ def calculate_anomalies(df, reference_period_df):
     # calculate climate anomalies
     grouped_anomaly = df.copy()
     for column in columns:
-        grouped_anomaly[column] = (df[column] - rp_grouped[column].mean()) / rp_grouped[column].std()
+        grouped_anomaly[column] = (df[column] - rp_grouped[column].mean()) #/ rp_grouped[column].std()
     return grouped_anomaly
 
+### ========================= ###
 
-def calculate_monthly_anomalies(df, reference_period_df):
+def calculate_anomalies_monthly(df, reference_period_df):
     """
-    For each column (except time/coordinate/ID columns), subtract
-    the mean of that column for the given month (in the reference period),
-    and optionally divide by the standard deviation if desired.
+    Calculate monthly climate anomalies based on reference period.
     """
-
-    # Identify the data columns on which to compute anomalies
-    ignore_cols = ['valid_time', 'latitude', 'longitude', 'year', 'month']
-    columns = [col for col in df.columns if col not in ignore_cols]
-
-    # 1. Group the reference period by `month` and compute mean and std
-    #    This results in a MultiIndex DataFrame with (column, statistic)
-    ref_stats = (
-        reference_period_df.groupby('month')[columns]
-        .agg(['mean', 'std'])
-    )
-    # ref_stats has shape like:
-    #               col1           col2          ...
-    #               mean    std    mean    std   ...
-    #     month
-    #      1
-    #      2
-    #     ...
+    # Identify the variable columns (all except metadata)
+    variable_columns = [col for col in df.columns if col not in ['valid_time', 'latitude', 'longitude', 'year', 'month']]
     
-    # 2. Create a copy of df to store anomalies
-    anomalies_df = df.copy()
-
-    # 3. For each row in df, pick the corresponding reference mean & std
-    #    for that row's month, and compute anomaly.
-    for col in columns:
-        # For a given column, "ref_stats[col]['mean']" is a Series,
-        # indexed by 'month'
-        mean_series = ref_stats[col]['mean']
-        std_series  = ref_stats[col]['std']
-
-        # Subtraction by monthly mean:
-        anomalies_df[col] = anomalies_df.apply(
-            lambda row: row[col] - mean_series.loc[row['month']],
-            axis=1
-        )
-
-        # Optionally, if you want to standardize (z-score):
-        anomalies_df[col] = anomalies_df.apply(
-            lambda row: row[col] / std_series.loc[row['month']]
-                        if std_series.loc[row['month']] != 0 else 0,
-            axis=1
-        )
-
-    return anomalies_df
+    df_anom = df.copy()
+    
+    # Get year and month from the valid_time column
+    df_anom['year'] = df['valid_time'].dt.year
+    df_anom['month'] = df['valid_time'].dt.month
 
 
+    # Process month-by-month
+    for month in range(1, 13):
+        # Subset the reference period for the current month
+        ref_subset = reference_period_df[reference_period_df['month'] == month]
+        monthly_mean = ref_subset[variable_columns].mean()
+        monthly_std = ref_subset[variable_columns].std()
+        
+        # Create a mask for rows corresponding to the current month
+        mask = df['month'] == month
+        
+        # Apply the anomaly calculation for the current month
+        df_anom.loc[mask, variable_columns] = (df.loc[mask, variable_columns] - monthly_mean) #/ monthly_std
+    
+    return df_anom
+
+def plot_two_variables_stacked(df, var1, var2, titles, selected_years=[1996, 2003, 2010, 2017]):
+    """
+    Create a single figure with two vertically stacked subplots: one for var1 and one for var2.
+    Instead of a colorbar, each year is plotted in a distinct color with a shared legend.
+    """
+    # Filter the DataFrame for the selected years
+    df_filtered = df[df['year'].isin(selected_years)].copy()
+    
+    # Define a color for each year (using tab10, which gives up to 10 distinct colors)
+    unique_years = sorted(df_filtered['year'].unique())
+    cmap = plt.cm.viridis
+    # For a discrete set of colors, map each year index to a normalized value between 0 and 1:
+    year_colors = {year: cmap(i / (len(unique_years)-1)) for i, year in enumerate(unique_years)}
+
+    
+    # Create subplots (2 rows, 1 column)
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(17, 6), sharex=True)
+    
+    # --- Plot for var1 (e.g., Sea Ice Concentration) ---
+    ax1 = axes[0]
+    for year in selected_years:
+        # Filter data for the current year and exclude rows where the value is zero
+        df_year = df_filtered[(df_filtered['year'] == year) & (df_filtered[var1] != 0)]
+        ax1.plot(df_year['month'], df_year[var1],
+                    color=year_colors[year],
+                    label=str(year), marker = 'o')  # use the year as label
+    ax1.set_title(f'{titles.get(var1, var1)} by Month')
+    ax1.set_ylabel('Difference (% of cover)')
+    # ax1.set_xticks(range(1, 13))
+    # ax1.set_xticks([])
+    ax1.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+
+    
+    # --- Plot for var2 (e.g., Sea Surface Temperature) ---
+    ax2 = axes[1]
+    for year in selected_years:
+        df_year = df_filtered[(df_filtered['year'] == year) & (df_filtered[var2] != 0)]
+        ax2.plot(df_year['month'], df_year[var2],
+                    color=year_colors[year],
+                    label=str(year), marker = 'o')  # label each year
+    ax2.set_title(f'{titles.get(var2, var2)} by Month')
+    ax2.set_xlabel('Month')
+    ax2.set_ylabel('Difference (Kelvin)')
+    ax2.set_xticks(range(1, 13))
+    
+    # Create a single legend for the entire figure.
+    # We'll take the handles and labels from the first subplot (they are the same for both)
+    handles, labels = ax1.get_legend_handles_labels()
+    # Place the legend at the top center of the figure, outside the subplots.
+    fig.legend(handles, labels, loc='upper center', ncol=len(selected_years), frameon=False)
+    
+    # Adjust the layout to leave space for the legend
+    sns.despine()
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    plt.show()
 
 
 
@@ -259,31 +292,6 @@ def percentile_analysis(df, columns):
         
     results_df = pd.DataFrame(results) 
     return results_df
-
-def decompose_time_series(df, columns):
-    # Ensure you have a proper DateTime index:
-    result_dict = {"Variable": [], "Trend": [], "Seasonal": [], "Residual": []}
-    for column in columns:
-        df['date'] = pd.to_datetime(df[['year', 'month']].assign(Day=1))
-        df.set_index('date', inplace=True)
-
-        # Choose a variable, for example, sea surface temperature:
-
-        # Decompose with an assumed period of 12 months (adjust if needed)
-        stl = STL(df[column].dropna(), period=12)
-        result = stl.fit()
-        # Plot the decomposed components:
-        result.plot()
-        # plt.suptitle(f"STL Decomposition of {column}", fontsize=14)
-        plt.show()
-        # Store the results in a dictionary:
-        result_dict["Variable"].append(column)
-        result_dict["Trend"].append(result.trend)
-        result_dict["Seasonal"].append(result.seasonal)
-        result_dict["Residual"].append(result.resid)
-
-    result_df = pd.DataFrame(result_dict)
-    return result_df
 
 def plot_yearly(df, columns, titles, deg):
     for column in columns:   
