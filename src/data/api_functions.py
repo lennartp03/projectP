@@ -26,7 +26,7 @@ def get_unique_date_combinations(filepath):
     return unique_combs
 
 
-def retreive_daily_climate(unique_dates, target_directory = "/Users/philipp/Documents/02_Master_Uni/Uni_Tübingen/Semester_1/06 Data Literacy/02 Project/projectP/era5_datasets"):
+def retreive_daily_climate(unique_dates, target_directory = "../data/era5_daily"):
 
     for item in unique_dates:
         year = str(item.split('-')[0])
