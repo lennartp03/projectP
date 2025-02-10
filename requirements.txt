@@ -6,4 +6,11 @@ scikit-learn
 shap
 xarray
 cdsapi
+netcdf4
+optuna
+geopandas
+geopy
+cartopy
+xgboost
+hyperopt
 #metview # Only used for weather EDA, installation is optional
