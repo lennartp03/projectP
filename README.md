@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains the materials for the practical project in **Data Literacy**, which aims to analyze and predict the movement of pneguin colonies in the polar regions based on short-term weather forecasts. This repository includes all relevant as well as additional code that was used for conducting the analysis. It therefore serves as a practical foundation to the project report.
+This repository contains the materials for the practical project in **Data Literacy**, which aims to analyze and predict the movement of penguin colonies in the polar regions based on short-term weather forecasts. This repository includes all relevant as well as additional code that was used for conducting the analysis. It therefore serves as a practical foundation to the project report.
 
 ## Research Question
 
@@ -27,23 +27,34 @@ The repository does not contain any data in the respective `/data` folder, as bo
 2. **Species-Level Prediction of Mean Distance to Colony**
 3. **Colony-Level Time Series Prediction of Mean Distance to Colony**
 
-## Project Structure (Tentative)
+## Project Structure
 
 ```
 projectp/
 ├── data/
 │   ├── era5_daily/
 │   ├── era5_monthly/
+│   ├── era5_reference_period/
 │   ├── era5/
 │   └── penguin/
 ├── notebooks/
-│   ├── *.ipynb
+│   ├── api_retrieve_weather_data.ipynb
+│   ├── merge_penguin_era5.ipynb
+│   ├── penguin_feature_engineering.ipynb
+│   ├── prediction_penguin_adelie.ipynb
+│   ├── prediction_time_series.ipynb
 │   └── additional/
+│       └── *.ipynb
 ├── src/
+│   ├── data/
+│   │   └── api_functions.py
 │   ├── model/
 │   │   ├── interpretation.py
+│   │   ├── non_time_series_model.py
 │   │   └── regression.py
 │   ├── utils/
+│   │   ├── features_monthly.py
+│   │   ├── features_penguins.py
 │   │   └── preprocessing_lr.py
 │   └── visualization/
 │       └── plots_lr.py
@@ -51,6 +62,32 @@ projectp/
 ├── LICENSE
 └── requirements.txt
 ```
+
+Context and description of the main directories:
+
+**/data**
+
+- Under the data directory there are respective placeholders that were used for the daily (and monthly) aggregated ERA5 weather data, the baseline timespan and also the penguin datasets. The final processed penguin dataset is name `penguins_final.csv`, the merged version with the weather covariates used for model training is `penguins_final_with_era5.csv`. As stated before, the data is not included in this repository due to restrictions.
+
+**/notebooks**
+
+- **api_retrieve_weather_data.ipynb** – Retrieves the weather data from the Copernicus ERA5 API.
+- **merge_penguin_era5.ipynb** – Merges and interpolates the ERA5 weather data on the penguin tracking data.
+- **penguin_feature_engineering.ipynb** – Includes steps for feature engineering on the penguin dataset.
+- **prediction_penguin_adelie.ipynb** – Focuses on the general (time-series-independent) prediction of the daily mean distance to the colony for Adelie Penguins based on weather covariates.
+- **prediction_time_series.ipynb** – Implements time-series forecasting (using Ridge and Lasso regression) for predicting colony movement.
+- **additional/\*** – Contains supplementary notebooks that were used for exploratory analyses and contain further analyses and experiments - that were not part of the final reported results.
+
+**/src**
+
+- **src/data/api_functions.py** – Contains functions to interact with ERA5 APIs for retrieving weather data.
+- **src/model/interpretation.py** – Includes script for computing SHAP values.
+- **src/model/non_time_series_model.py** – Implements methods used in the `prediction_penguin_adelie.ipynb` notebook.
+- **src/model/regression.py** – Implements methods used in the `prediction_time_series.ipynb` notebook.
+- **src/utils/features_monthly.py** – Contains utility functions for extracting and processing monthly features from the data.
+- **src/utils/features_penguins.py** – Provides functions to process and extract features specifically from the penguin tracking dataset.
+- **src/utils/preprocessing_lr.py** – Includes data preprocessing routines tailored for linear regression analyses used in `prediction_time_series.ipynb`.
+- **src/visualization/plots_lr.py** – Contains plotting functions for visualizing results.
 
 ## Requirements
 
