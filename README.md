@@ -32,7 +32,10 @@ The repository does not contain any data in the respective `/data` folder, as bo
 ```
 projectp/
 ├── data/
-│   └── [placeholder for datasets]
+│   ├── era5_daily/
+│   ├── era5_monthly/
+│   ├── era5/
+│   └── penguin/
 ├── notebooks/
 │   ├── *.ipynb
 │   └── additional/
@@ -58,6 +61,8 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+
+NOTE: This repository contains barely no datasets due to the restrictions of the Copernicus Climate Data Store and the Seabird Tracking Database. The data must be requested from the respective sources. Other than that, the logic cannot be executed without the data.
 
 ## Results and Reporting
 
