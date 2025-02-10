@@ -188,10 +188,10 @@ def interquartile_range(df, columns):
 def percentile_analysis(df, columns):
     results = {"Variable": [], "5th Percentile": [], "95th Percentile": [], "Count Below": [], "Count Above": []}
     for col in columns:
-        lower_bound = grouped_anomaly[col].quantile(0.05)
-        upper_bound = grouped_anomaly[col].quantile(0.95)
-        count_lower = (grouped_anomaly[col] < lower_bound).sum()
-        count_upper = (grouped_anomaly[col] > upper_bound).sum()
+        lower_bound = df[col].quantile(0.05)
+        upper_bound = df[col].quantile(0.95)
+        count_lower = (df[col] < lower_bound).sum()
+        count_upper = (df[col] > upper_bound).sum()
         results["Variable"].append(col)
         results["5th Percentile"].append(lower_bound)
         results["95th Percentile"].append(upper_bound)
@@ -230,9 +230,6 @@ def decompose_time_series(df, columns):
 
     result_df = pd.DataFrame(result_dict)
     return result_df
-
-
-
 
 def plot_yearly(df, columns, titles, deg):
     for column in columns:   
