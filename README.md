@@ -2,64 +2,66 @@
 
 ## Overview
 
-This repository contains the materials for the practical project in **Data Literacy**, which aims to analyze and predict the movement of seabird colonies in the polar regions based on short-term weather forecasts and the impact of ice cap shrinkage.
+This repository contains the materials for the practical project in **Data Literacy**, which aims to analyze and predict the movement of pneguin colonies in the polar regions based on short-term weather forecasts. This repository includes all relevant as well as additional code that was used for conducting the analysis. It therefore serves as a practical foundation to the project report.
 
 ## Research Question
 
-Can we analyze and predict the movement of seabird colonies based on short-term weather forecasts? How does the shrinkage of ice caps and coastal regions affect these movement patterns?
+Can we analyze and predict the movement of penguin colonies based on short-term weather forecasts? How do the effects of climate change affect these movement patterns?
 
 ### Motivation
 
-The polar regions have been severely impacted by global warming, leading to coastal shrinkage due to rising sea levels and ice sheet melting. The movements of seabird colonies, such as penguins, are likely influenced by these environmental changes. This project investigates whether climate measurements, such as temperature and inclement weather, can be used to predict seabird movements.
+The polar regions have been severely impacted by global warming, leading to coastal shrinkage due to rising sea levels and ice sheet melting. The movements of seabird colonies, such as penguins, are likely influenced by these environmental changes. This project investigates whether climate measurements, such as temperature and inclement weather, can be used to predict their movements.
 
 ## Dataset
 
-The project uses datasets from the **Copernicus Climate Data Store** and other sources:
+The project uses the following datasets (see project report for details):
 
-- **Copernicus ERA5 Weather Data**
-- **Seabird Tracking Database**
+- **Copernicus ERA5 Weather Data** (https://cds.climate.copernicus.eu)
+- **Seabird Tracking Database** (https://www.seabirdtracking.org/)
+
+The repository does not contain any data in the respective `/data` folder, as both - the penguin and the ERA5 data - must be requested from the respective sources.
 
 ## Methods and Analysis
 
 1. **Descriptive and Exploratory Data Analysis**
-2. **Correlation Analysis** between movement tracks and influencing factors (e.g., temperature, ice cap shrinkage, coastal erosion)
-3. **Movement Extraction & Modeling**
-   - Extract movement coordinates of seabird colonies from the Seabird Tracking Database.
-   - Train statistical models to relate movement data to short-term weather forecasts.
+2. **Species-Level Prediction of Mean Distance to Colony**
+3. **Colony-Level Time Series Prediction of Mean Distance to Colony**
 
 ## Project Structure (Tentative)
 
 ```
-📂 projectp
-├── 📂 data                  # Raw and processed datasets
-├── 📂 notebooks             # Jupyter Notebooks for analysis
-├── 📂 src                   # Source code for data processing and modeling
-├── 📂 reports               # Final project reports and documentation
-├── README.md                # Project overview (this file)
-└── requirements.txt         # Python dependencies
+projectp/
+├── data/
+│   └── [placeholder for datasets]
+├── notebooks/
+│   ├── *.ipynb
+│   └── additional/
+├── src/
+│   ├── model/
+│   │   ├── interpretation.py
+│   │   └── regression.py
+│   ├── utils/
+│   │   └── preprocessing_lr.py
+│   └── visualization/
+│       └── plots_lr.py
+├── README.md
+├── LICENSE
+└── requirements.txt
 ```
 
 ## Requirements
 
-To run this project, install the required dependencies:
+To run this project, create a `venv` and install the required dependencies:
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/lennartp03/projectp.git
-   cd projectp
-   ```
-2. Run the Jupyter Notebooks in `notebooks/` to explore and analyze the data.
-3. Execute scripts in `src/` to preprocess data and train models.
-
 ## Results and Reporting
 
-The final report follows a structured format:
+The final report follows a structured format and was sent out seperately. It includes the following sections:
 
 - **Abstract**
 - **Introduction**
